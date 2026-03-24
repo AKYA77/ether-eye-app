@@ -4,7 +4,11 @@ export interface AppConfig {
   startDate: Date;
   minProfitThreshold: number;
   maxComputeUnits: number;
+  backendUrl: string;
+  mode: 'live' | 'demo';
 }
+
+export type WsStatus = 'disconnected' | 'connecting' | 'connected' | 'reconnecting' | 'error';
 
 export interface LogEntry {
   id: string;

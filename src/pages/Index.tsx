@@ -7,7 +7,7 @@ import { SignalMatrix } from '@/components/SignalMatrix';
 import { Square } from 'lucide-react';
 
 export default function Index() {
-  const { status, logs, signals, metrics, error, progress, launch, stop, setStatus } = useEngine();
+  const { status, wsStatus, logs, signals, metrics, error, progress, launch, stop, setStatus } = useEngine();
   const [showConfig, setShowConfig] = useState(true);
   const mainRef = useRef<HTMLDivElement>(null);
   const [mainHeight, setMainHeight] = useState(600);
@@ -27,7 +27,6 @@ export default function Index() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
-      {/* Config Overlay */}
       {showConfig && (
         <ConfigOverlay
           onLaunch={handleLaunch}
@@ -36,14 +35,13 @@ export default function Index() {
         />
       )}
 
-      {/* Metrics Header */}
-      <MetricsHeader metrics={metrics} status={status} progress={progress} />
+      <MetricsHeader metrics={metrics} status={status} wsStatus={wsStatus} progress={progress} />
 
-      {/* Control bar */}
       {!showConfig && (
         <div className="flex items-center justify-between px-4 py-1.5 bg-surface-2 border-b border-border">
           <span className="text-[10px] text-muted-foreground">
             Engine {status === 'running' ? 'streaming' : status}
+            {wsStatus === 'connected' && ' • WebSocket connected'}
           </span>
           <div className="flex items-center gap-2">
             {status === 'running' && (
@@ -55,7 +53,7 @@ export default function Index() {
               </button>
             )}
             <button
-              onClick={() => { setShowConfig(true); setStatus('configuring'); }}
+              onClick={() => { stop(); setShowConfig(true); setStatus('configuring'); }}
               className="px-2 py-1 text-[10px] text-muted-foreground border border-border rounded hover:bg-surface-3 transition-colors"
             >
               Reconfigure
@@ -64,14 +62,10 @@ export default function Index() {
         </div>
       )}
 
-      {/* Main Content */}
       <div ref={mainRef} className="flex flex-1 overflow-hidden">
-        {/* Discovery Terminal - Left */}
         <div className="w-80 shrink-0 border-r border-border">
           <LiveLog logs={logs} />
         </div>
-
-        {/* Signal Matrix - Main */}
         <div className="flex-1 overflow-hidden">
           <SignalMatrix signals={signals} containerHeight={mainHeight} />
         </div>

@@ -1,10 +1,11 @@
 import { memo } from 'react';
-import { SystemMetrics, EngineStatus } from '@/types/solana';
-import { Activity, Cpu, HardDrive, Signal, DollarSign, Target, Database, Coins } from 'lucide-react';
+import { SystemMetrics, EngineStatus, WsStatus } from '@/types/solana';
+import { Activity, Cpu, HardDrive, Signal, DollarSign, Target, Database, Coins, Wifi, WifiOff } from 'lucide-react';
 
 interface Props {
   metrics: SystemMetrics | null;
   status: EngineStatus;
+  wsStatus: WsStatus;
   progress: number;
 }
 
@@ -20,7 +21,26 @@ function MetricBadge({ icon: Icon, label, value, color = 'text-foreground' }: {
   );
 }
 
-export const MetricsHeader = memo(function MetricsHeader({ metrics, status, progress }: Props) {
+function WsBadge({ wsStatus }: { wsStatus: WsStatus }) {
+  const config = {
+    disconnected: { icon: WifiOff, color: 'text-muted-foreground', label: 'OFF', bg: '' },
+    connecting: { icon: Wifi, color: 'text-terminal-amber', label: 'CONNECTING', bg: 'animate-pulse' },
+    connected: { icon: Wifi, color: 'text-terminal-green', label: 'LIVE', bg: '' },
+    reconnecting: { icon: Wifi, color: 'text-terminal-amber', label: 'RECONNECTING', bg: 'animate-pulse' },
+    error: { icon: WifiOff, color: 'text-terminal-red', label: 'ERROR', bg: '' },
+  }[wsStatus];
+
+  if (wsStatus === 'disconnected') return null;
+
+  return (
+    <div className={`flex items-center gap-1.5 px-3 py-1.5 bg-surface-2 rounded border border-border ${config.bg}`}>
+      <config.icon className={`w-3.5 h-3.5 ${config.color}`} />
+      <span className={`text-[10px] font-bold uppercase tracking-wider ${config.color}`}>{config.label}</span>
+    </div>
+  );
+}
+
+export const MetricsHeader = memo(function MetricsHeader({ metrics, status, wsStatus, progress }: Props) {
   const statusColor = {
     idle: 'text-muted-foreground',
     configuring: 'text-terminal-amber',
@@ -45,6 +65,7 @@ export const MetricsHeader = memo(function MetricsHeader({ metrics, status, prog
           <span className={`text-[10px] uppercase tracking-widest font-semibold ${statusColor}`}>
             [{status}]
           </span>
+          <WsBadge wsStatus={wsStatus} />
         </div>
 
         {metrics && (
@@ -61,7 +82,7 @@ export const MetricsHeader = memo(function MetricsHeader({ metrics, status, prog
         )}
       </div>
 
-      {status === 'running' && (
+      {(status === 'running' || status === 'finding-block') && (
         <div className="mt-2">
           <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
             <span>Processing Block {metrics?.currentBlock?.toLocaleString() ?? 0} of {(432000).toLocaleString()}</span>
