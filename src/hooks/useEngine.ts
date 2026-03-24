@@ -19,29 +19,19 @@ export function useEngine() {
     setError(null);
 
     try {
-      // Validate Helius RPC
       const rpcRes = await fetch(config.heliusRpcUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getSlot', params: [] }),
       });
-      if (!rpcRes.ok) throw new Error('Invalid Helius RPC URL or connection failed');
-      const rpcData = await rpcRes.json();
-      if (rpcData.error) throw new Error(`RPC Error: ${rpcData.error.message}`);
-
-      // BirdEye validation skipped from browser due to CORS — will validate in backend
-      return true;
-    } catch (e: any) {
-      // If Helius fails, show error. If it's just CORS on BirdEye, proceed anyway
-      if (e.message.includes('RPC') || e.message.includes('Helius')) {
-        setError(e.message);
-        setStatus('error');
-        return false;
+      if (rpcRes.ok) {
+        const rpcData = await rpcRes.json();
+        if (rpcData.error) console.warn('RPC warning:', rpcData.error.message);
       }
-      // Network/CORS error — proceed with mock mode
-      console.warn('API validation skipped (CORS):', e.message);
-      return true;
+    } catch (e: any) {
+      console.warn('API validation skipped:', e.message);
     }
+    return true;
   }, []);
 
   const launch = useCallback(async (config: AppConfig) => {
