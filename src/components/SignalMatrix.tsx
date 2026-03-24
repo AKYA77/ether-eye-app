@@ -1,4 +1,5 @@
 import { memo, useCallback } from 'react';
+// @ts-ignore
 import { FixedSizeList as List } from 'react-window';
 import { SignalKPI } from '@/types/solana';
 import { TableProperties, Download } from 'lucide-react';
