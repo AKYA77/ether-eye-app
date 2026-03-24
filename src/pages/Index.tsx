@@ -1,16 +1,81 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useRef, useEffect } from 'react';
+import { useEngine } from '@/hooks/useEngine';
+import { MetricsHeader } from '@/components/MetricsHeader';
+import { ConfigOverlay } from '@/components/ConfigOverlay';
+import { LiveLog } from '@/components/LiveLog';
+import { SignalMatrix } from '@/components/SignalMatrix';
+import { Square } from 'lucide-react';
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+export default function Index() {
+  const { status, logs, signals, metrics, error, progress, launch, stop, setStatus } = useEngine();
+  const [showConfig, setShowConfig] = useState(true);
+  const mainRef = useRef<HTMLDivElement>(null);
+  const [mainHeight, setMainHeight] = useState(600);
+
+  useEffect(() => {
+    const obs = new ResizeObserver(entries => {
+      for (const e of entries) setMainHeight(e.contentRect.height);
+    });
+    if (mainRef.current) obs.observe(mainRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const handleLaunch = async (config: any) => {
+    await launch(config);
+    setShowConfig(false);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="flex flex-col h-screen overflow-hidden bg-background">
+      {/* Config Overlay */}
+      {showConfig && (
+        <ConfigOverlay
+          onLaunch={handleLaunch}
+          error={error}
+          isLoading={status === 'finding-block'}
+        />
+      )}
+
+      {/* Metrics Header */}
+      <MetricsHeader metrics={metrics} status={status} progress={progress} />
+
+      {/* Control bar */}
+      {!showConfig && (
+        <div className="flex items-center justify-between px-4 py-1.5 bg-surface-2 border-b border-border">
+          <span className="text-[10px] text-muted-foreground">
+            Engine {status === 'running' ? 'streaming' : status}
+          </span>
+          <div className="flex items-center gap-2">
+            {status === 'running' && (
+              <button
+                onClick={stop}
+                className="flex items-center gap-1 px-2 py-1 text-[10px] text-terminal-red border border-terminal-red/30 rounded hover:bg-terminal-red/10 transition-colors"
+              >
+                <Square className="w-3 h-3" /> Stop
+              </button>
+            )}
+            <button
+              onClick={() => { setShowConfig(true); setStatus('configuring'); }}
+              className="px-2 py-1 text-[10px] text-muted-foreground border border-border rounded hover:bg-surface-3 transition-colors"
+            >
+              Reconfigure
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div ref={mainRef} className="flex flex-1 overflow-hidden">
+        {/* Discovery Terminal - Left */}
+        <div className="w-80 shrink-0 border-r border-border">
+          <LiveLog logs={logs} />
+        </div>
+
+        {/* Signal Matrix - Main */}
+        <div className="flex-1 overflow-hidden">
+          <SignalMatrix signals={signals} containerHeight={mainHeight} />
+        </div>
+      </div>
     </div>
   );
-};
-
-const Index = PlaceholderIndex;
-
-export default Index;
+}
