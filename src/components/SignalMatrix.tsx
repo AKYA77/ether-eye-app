@@ -1,6 +1,5 @@
 import { memo, useCallback } from 'react';
-import ReactWindow from 'react-window';
-const List = ReactWindow.FixedSizeList || (ReactWindow as any).default?.FixedSizeList || ReactWindow;
+import { List } from 'react-window';
 import { SignalKPI } from '@/types/solana';
 import { TableProperties, Download } from 'lucide-react';
 
