@@ -11,13 +11,15 @@ interface Props {
 export function ConfigOverlay({ onLaunch, error, isLoading }: Props) {
   const [heliusUrl, setHeliusUrl] = useState('https://mainnet.helius-rpc.com/?api-key=e2ec7ef1-90e4-4999-9ec3-6ea3bb43c29e');
   const [birdeyeKey, setBirdeyeKey] = useState('e49c3151c6344a6ab8f226c88477fffc');
-  const [startDate, setStartDate] = useState('');
+  const [startDate, setStartDate] = useState('2024-06-15');
   const [startTime, setStartTime] = useState('00:00');
   const [minProfit, setMinProfit] = useState('0.05');
   const [maxCU, setMaxCU] = useState('1400000');
 
+  const canLaunch = heliusUrl.length > 0 && birdeyeKey.length > 0 && startDate.length > 0 && !isLoading;
+
   const handleLaunch = () => {
-    if (!heliusUrl || !birdeyeKey || !startDate) return;
+    if (!canLaunch) return;
     const dt = new Date(`${startDate}T${startTime}:00Z`);
     onLaunch({
       heliusRpcUrl: heliusUrl,
@@ -139,7 +141,7 @@ export function ConfigOverlay({ onLaunch, error, isLoading }: Props) {
           {/* Launch */}
           <button
             onClick={handleLaunch}
-            disabled={isLoading || !heliusUrl || !birdeyeKey || !startDate}
+            disabled={!canLaunch}
             className="w-full py-3 bg-terminal-green text-primary-foreground font-bold text-sm rounded hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? (
