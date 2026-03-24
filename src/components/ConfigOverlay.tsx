@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AppConfig } from '@/types/solana';
-import { Zap, Key, Calendar, Settings, AlertTriangle, Loader2 } from 'lucide-react';
+import { Zap, Key, Calendar, Settings, AlertTriangle, Loader2, Globe, Monitor } from 'lucide-react';
 
 interface Props {
   onLaunch: (config: AppConfig) => void;
@@ -15,8 +15,10 @@ export function ConfigOverlay({ onLaunch, error, isLoading }: Props) {
   const [startTime, setStartTime] = useState('00:00');
   const [minProfit, setMinProfit] = useState('0.05');
   const [maxCU, setMaxCU] = useState('1400000');
+  const [mode, setMode] = useState<'demo' | 'live'>('demo');
+  const [backendUrl, setBackendUrl] = useState('ws://localhost:8080');
 
-  const canLaunch = heliusUrl.length > 0 && birdeyeKey.length > 0 && startDate.length > 0 && !isLoading;
+  const canLaunch = heliusUrl.length > 0 && birdeyeKey.length > 0 && startDate.length > 0 && !isLoading && (mode === 'demo' || backendUrl.length > 0);
 
   const handleLaunch = () => {
     if (!canLaunch) return;
@@ -27,15 +29,17 @@ export function ConfigOverlay({ onLaunch, error, isLoading }: Props) {
       startDate: dt,
       minProfitThreshold: parseFloat(minProfit),
       maxComputeUnits: parseInt(maxCU),
+      backendUrl,
+      mode,
     });
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
       <div className="absolute inset-0 scanline opacity-30" />
-      <div className="relative w-full max-w-lg mx-4 bg-surface-1 border border-border rounded-lg overflow-hidden glow-green">
+      <div className="relative w-full max-w-lg mx-4 bg-surface-1 border border-border rounded-lg overflow-hidden glow-green max-h-[90vh] overflow-y-auto terminal-scrollbar">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-border bg-surface-2">
+        <div className="px-6 py-4 border-b border-border bg-surface-2 sticky top-0 z-10">
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-terminal-green" />
             <h1 className="text-lg font-bold">
@@ -48,6 +52,61 @@ export function ConfigOverlay({ onLaunch, error, isLoading }: Props) {
         </div>
 
         <div className="p-6 space-y-5">
+          {/* Mode Selection */}
+          <fieldset>
+            <legend className="flex items-center gap-1.5 text-xs font-semibold text-terminal-cyan uppercase tracking-widest mb-3">
+              <Globe className="w-3.5 h-3.5" /> Engine Mode
+            </legend>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setMode('demo')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded border transition-all ${
+                  mode === 'demo'
+                    ? 'border-terminal-green bg-terminal-green/10 text-terminal-green'
+                    : 'border-border bg-surface-2 text-muted-foreground hover:border-muted-foreground'
+                }`}
+              >
+                <Monitor className="w-5 h-5" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Demo Mode</span>
+                <span className="text-[9px] opacity-70">Simulated data</span>
+              </button>
+              <button
+                onClick={() => setMode('live')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded border transition-all ${
+                  mode === 'live'
+                    ? 'border-terminal-green bg-terminal-green/10 text-terminal-green'
+                    : 'border-border bg-surface-2 text-muted-foreground hover:border-muted-foreground'
+                }`}
+              >
+                <Globe className="w-5 h-5" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Live Mode</span>
+                <span className="text-[9px] opacity-70">Rust WebSocket</span>
+              </button>
+            </div>
+          </fieldset>
+
+          {/* Backend URL (Live mode only) */}
+          {mode === 'live' && (
+            <fieldset className="space-y-3">
+              <legend className="flex items-center gap-1.5 text-xs font-semibold text-terminal-amber uppercase tracking-widest mb-2">
+                <Globe className="w-3.5 h-3.5" /> Backend Connection
+              </legend>
+              <div>
+                <label className="text-[10px] text-muted-foreground uppercase tracking-wider">WebSocket URL</label>
+                <input
+                  type="text"
+                  value={backendUrl}
+                  onChange={e => setBackendUrl(e.target.value)}
+                  className="w-full mt-1 px-3 py-2 bg-input border border-border rounded text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground"
+                  placeholder="ws://localhost:8080 or wss://your-server.com"
+                />
+                <p className="text-[9px] text-muted-foreground mt-1">
+                  Connect to your Rust backend. The /ws path will be appended automatically.
+                </p>
+              </div>
+            </fieldset>
+          )}
+
           {/* API Credentials */}
           <fieldset className="space-y-3">
             <legend className="flex items-center gap-1.5 text-xs font-semibold text-terminal-cyan uppercase tracking-widest mb-2">
@@ -147,12 +206,12 @@ export function ConfigOverlay({ onLaunch, error, isLoading }: Props) {
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Validating & Finding Start Block...
+                {mode === 'live' ? 'Connecting to Backend...' : 'Validating & Finding Start Block...'}
               </>
             ) : (
               <>
                 <Zap className="w-4 h-4" />
-                Launch Backtest
+                {mode === 'live' ? 'Connect & Launch' : 'Launch Demo'}
               </>
             )}
           </button>
