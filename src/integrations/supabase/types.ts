@@ -14,7 +14,220 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      scan_sessions: {
+        Row: {
+          birdeye_api_key: string
+          created_at: string | null
+          current_block: number | null
+          error_message: string | null
+          helius_rpc_url: string
+          id: string
+          max_compute_units: number | null
+          min_profit_threshold: number | null
+          start_date: string
+          status: string
+          total_blocks: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          birdeye_api_key: string
+          created_at?: string | null
+          current_block?: number | null
+          error_message?: string | null
+          helius_rpc_url: string
+          id?: string
+          max_compute_units?: number | null
+          min_profit_threshold?: number | null
+          start_date: string
+          status?: string
+          total_blocks?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          birdeye_api_key?: string
+          created_at?: string | null
+          current_block?: number | null
+          error_message?: string | null
+          helius_rpc_url?: string
+          id?: string
+          max_compute_units?: number | null
+          min_profit_threshold?: number | null
+          start_date?: string
+          status?: string
+          total_blocks?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      signals: {
+        Row: {
+          alpha_score: number | null
+          atomic_success_lite_svm: boolean | null
+          block_time: string | null
+          competitor_overlap_count: number | null
+          created_at: string | null
+          dex_route: string
+          explorer_url: string | null
+          gap_duration_ms: number | null
+          gross_profit: number | null
+          historical_age_pool_a_months: number | null
+          historical_age_pool_b_months: number | null
+          id: string
+          instruction_index: number | null
+          jito_tip_detected: boolean | null
+          latency_buffer_ms: number | null
+          margin_fi_liquidity_status: string | null
+          net_profit: number | null
+          optimal_input: string | null
+          price_dex_a: number | null
+          price_dex_b: number | null
+          priority_fee_99th: number | null
+          realism_factor: number | null
+          realized_slippage_pct: number | null
+          session_id: string | null
+          slot: number
+          spread_pct: number | null
+          token_pair: string
+          total_tvl_usd: number | null
+          tx_signature_a: string | null
+          tx_signature_b: string | null
+          verified: boolean | null
+          winner_signature: string | null
+        }
+        Insert: {
+          alpha_score?: number | null
+          atomic_success_lite_svm?: boolean | null
+          block_time?: string | null
+          competitor_overlap_count?: number | null
+          created_at?: string | null
+          dex_route: string
+          explorer_url?: string | null
+          gap_duration_ms?: number | null
+          gross_profit?: number | null
+          historical_age_pool_a_months?: number | null
+          historical_age_pool_b_months?: number | null
+          id?: string
+          instruction_index?: number | null
+          jito_tip_detected?: boolean | null
+          latency_buffer_ms?: number | null
+          margin_fi_liquidity_status?: string | null
+          net_profit?: number | null
+          optimal_input?: string | null
+          price_dex_a?: number | null
+          price_dex_b?: number | null
+          priority_fee_99th?: number | null
+          realism_factor?: number | null
+          realized_slippage_pct?: number | null
+          session_id?: string | null
+          slot: number
+          spread_pct?: number | null
+          token_pair: string
+          total_tvl_usd?: number | null
+          tx_signature_a?: string | null
+          tx_signature_b?: string | null
+          verified?: boolean | null
+          winner_signature?: string | null
+        }
+        Update: {
+          alpha_score?: number | null
+          atomic_success_lite_svm?: boolean | null
+          block_time?: string | null
+          competitor_overlap_count?: number | null
+          created_at?: string | null
+          dex_route?: string
+          explorer_url?: string | null
+          gap_duration_ms?: number | null
+          gross_profit?: number | null
+          historical_age_pool_a_months?: number | null
+          historical_age_pool_b_months?: number | null
+          id?: string
+          instruction_index?: number | null
+          jito_tip_detected?: boolean | null
+          latency_buffer_ms?: number | null
+          margin_fi_liquidity_status?: string | null
+          net_profit?: number | null
+          optimal_input?: string | null
+          price_dex_a?: number | null
+          price_dex_b?: number | null
+          priority_fee_99th?: number | null
+          realism_factor?: number | null
+          realized_slippage_pct?: number | null
+          session_id?: string | null
+          slot?: number
+          spread_pct?: number | null
+          token_pair?: string
+          total_tvl_usd?: number | null
+          tx_signature_a?: string | null
+          tx_signature_b?: string | null
+          verified?: boolean | null
+          winner_signature?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signals_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "scan_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whitelist: {
+        Row: {
+          created_at: string | null
+          dex: string
+          id: string
+          liquidity_usd: number
+          mint_address: string
+          pool_address: string | null
+          pool_age_months: number | null
+          removed_reason: string | null
+          session_id: string | null
+          status: string | null
+          token_name: string | null
+          token_symbol: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          dex: string
+          id?: string
+          liquidity_usd?: number
+          mint_address: string
+          pool_address?: string | null
+          pool_age_months?: number | null
+          removed_reason?: string | null
+          session_id?: string | null
+          status?: string | null
+          token_name?: string | null
+          token_symbol?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          dex?: string
+          id?: string
+          liquidity_usd?: number
+          mint_address?: string
+          pool_address?: string | null
+          pool_age_months?: number | null
+          removed_reason?: string | null
+          session_id?: string | null
+          status?: string | null
+          token_name?: string | null
+          token_symbol?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whitelist_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "scan_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
