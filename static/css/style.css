@@ -1,0 +1,117 @@
+/* CSS Variables for Dark Mode */
+:root {
+    --background-color: #121212;
+    --text-color: #E5E5E5;
+    --primary-color: #1E88E5;
+    --card-background: #1F1F1F;
+    --sidebar-background: #1A1A1A;
+    --alert-success: #388E3C;
+    --alert-info: #1976D2;
+    --alert-warning: #FBC02D;
+    --alert-danger: #D32F2F;
+}
+
+/* General Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Sidebar Navigation */
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-background);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar a {
+    padding: 15px;
+    text-decoration: none;
+    color: var(--text-color);
+}
+.sidebar a:hover {
+    background-color: var(--primary-color);
+}
+
+/* Grid Cards */
+.card {
+    background-color: var(--card-background);
+    border: 1px solid #333;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 5px;
+}
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Buttons */
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: darken(var(--primary-color), 10%);
+}
+
+/* Progress Bars */
+.progress {
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 5px;
+}
+.progress .progress-bar {
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: width 0.4s;
+}
+
+/* Alerts */
+.alert {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+.alert-success {
+    background-color: var(--alert-success);
+    color: white;
+}
+.alert-info {
+    background-color: var(--alert-info);
+    color: white;
+}
+.alert-warning {
+    background-color: var(--alert-warning);
+    color: black;
+}
+.alert-danger {
+    background-color: var(--alert-danger);
+    color: white;
+}
+
+/* Responsive Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+td, th {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.fade-in {
+    animation: fadeIn 0.5s;
+}
