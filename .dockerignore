@@ -1,0 +1,16 @@
+.git
+.gitignore
+target/
+Cargo.lock
+*.md
+node_modules/
+bun.lock*
+package*.json
+tsconfig*.json
+vite.config.ts
+playwright*
+tailwind.config.ts
+postcss.config.js
+components.json
+eslint.config.js
+.env.local
